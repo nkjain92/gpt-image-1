@@ -13,10 +13,21 @@ export async function POST(request: NextRequest) {
   try {
     // Parse the JSON request body
     const body = await request.json();
-    const { prompt, size = '1024x1024', quality = 'standard' } = body;
+    const { prompt, size = '1024x1024', quality = 'high' } = body;
 
     if (!prompt) {
       return NextResponse.json({ error: 'Prompt is required' }, { status: 400 });
+    }
+
+    // Validate quality parameter
+    const validQualities = ['low', 'medium', 'high', 'auto'];
+    if (!validQualities.includes(quality)) {
+      return NextResponse.json(
+        {
+          error: `Invalid quality value. Supported values are: ${validQualities.join(', ')}`,
+        },
+        { status: 400 },
+      );
     }
 
     // Generate image using OpenAI API
